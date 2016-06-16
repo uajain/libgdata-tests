@@ -13,7 +13,6 @@ int main()
 	GDataPicasaWebService *service;
 	GDataPicasaWebFile *file_entry, *uploaded_file_entry;
 	GDataUploadStream *upload_stream;
-	GDataPicasaWebAlbum *album, *inserted_album;
 
 	GoaObject *goa_object;
 	GoaClient *client;
@@ -54,14 +53,7 @@ int main()
 		printf("Service not authorized\n");
 		return -1;
 	}
-	/* Create a GDataPicasaWebAlbum entry for the new album, setting some information about it */
-	album = gdata_picasaweb_album_new (NULL);
-	gdata_entry_set_title (GDATA_ENTRY (album), "Photos from the Rhine");
-	gdata_entry_set_summary (GDATA_ENTRY (album), "An album of our adventures on the great river.");
-	gdata_picasaweb_album_set_location (album, "The Rhine, Germany");
 
-	/* Insert the new album on the server. Note that this is a blocking operation. */
-	inserted_album = gdata_picasaweb_service_insert_album (service, album, NULL, NULL);
 
 	/* Specify the GFile image on disk to upload */
 	file_data = g_file_new_for_path ("/home/uajain/Downloads/catq.jpg");
@@ -102,15 +94,13 @@ int main()
 		                G_OUTPUT_STREAM_SPLICE_CLOSE_SOURCE | G_OUTPUT_STREAM_SPLICE_CLOSE_TARGET, NULL, &error);
 	if (error != NULL)
 	{
-		printf ("Error : %s", error->message);
+		printf ("Error : %s", error->message);/****Error : Authentication required: Authorization required****/
 		return -1;	
 	}
 
 	/* Parse the resulting updated entry. This is a non-blocking operation. */
 	uploaded_file_entry = gdata_picasaweb_service_finish_file_upload (service, upload_stream, NULL);
 
-	g_object_unref (album);
-	g_object_unref (inserted_album);
 	g_object_unref (file_stream);
 	g_object_unref (client);
 	g_object_unref (upload_stream);
